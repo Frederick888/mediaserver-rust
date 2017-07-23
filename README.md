@@ -1,6 +1,6 @@
 # Introduction
 
-Lightweight Rust implementation for [ComicGlass](http://comicglass.net/) and all rights go to the author of it.
+Lightweight Rust implementation for [ComicGlass](http://comicglass.net/). All rights go to the author of it.
 
 # Usage
 
