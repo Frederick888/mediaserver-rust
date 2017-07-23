@@ -32,7 +32,7 @@ fn get_logger() -> &'static slog::Logger {
 fn get_args() -> &'static ArgMatches<'static> {
     lazy_static! {
         static ref MATCHES: ArgMatches<'static> = App::new("MediaServer")
-            .version("0.1")
+            .version(env!("CARGO_PKG_VERSION"))
             .author("Frederick Zhang <frederick888@tsundere.moe>")
             .arg(
                 Arg::with_name("host")
