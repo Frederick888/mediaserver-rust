@@ -6,9 +6,8 @@ use iron::headers;
 use handler::*;
 
 pub fn server_handler(req: &mut Request) -> IronResult<Response> {
-    let query_path = get_query("query_path", req).unwrap_or_else(|| String::from("./"));
+    let query_path = format!(".{}", try!(get_path(req)));
 
-    println!("{}", query_path);
     let query_path = Path::new(&query_path);
     if !query_path.exists() {
         return Ok(Response::with(status::NotFound));

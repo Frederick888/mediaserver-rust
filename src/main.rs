@@ -1,5 +1,4 @@
 extern crate iron;
-extern crate router;
 extern crate url;
 #[macro_use]
 extern crate slog;
@@ -9,7 +8,6 @@ extern crate lazy_static;
 extern crate clap;
 
 use iron::prelude::*;
-use router::Router;
 use clap::{Arg, App, ArgMatches};
 
 mod handler;
@@ -72,10 +70,7 @@ fn main() {
     let listen_port = get_args().value_of("port").unwrap_or_else(|| "8000");
     let listen_address = format!("{}:{}", listen_host, listen_port);
 
-    let mut router = Router::new();
-    router.get("/", handler::server::server_handler, "index");
-    router.get("/:query_path", handler::server::server_handler, "main");
-    let mut chain = Chain::new(router);
+    let mut chain = Chain::new(handler::server::server_handler);
     chain.link_before(BasicAuth);
     chain.link_after(LogAfterRequest);
     Iron::new(chain).http(listen_address).unwrap();;
