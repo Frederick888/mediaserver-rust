@@ -7,12 +7,8 @@ use handler::*;
 use error::HandlerError;
 
 pub fn server_handler(req: &mut Request) -> IronResult<Response> {
-    let query_path = format!(".{}", try!(get_path(req)));
-
-    let query_path = Path::new(&query_path);
-    if !query_path.exists() {
-        return Ok(Response::with(status::NotFound));
-    }
+    let raw_query_path = format!(".{}", try!(get_path(req)));
+    let query_path = Path::new(&raw_query_path);
 
     if query_path.is_dir() {
         let mut valid_paths = vec![];
@@ -41,8 +37,8 @@ pub fn server_handler(req: &mut Request) -> IronResult<Response> {
             r#"<html><head>
             <meta charset="UTF-8"><title>{}</title>
             </head><body><h1>{}</h1><ul>"#,
-            try!(get_path(req)),
-            try!(get_path(req))
+            &raw_query_path[1..],
+            &raw_query_path[1..]
         );
         for path in valid_paths {
             html += &path_to_html(&path).unwrap_or_default();
