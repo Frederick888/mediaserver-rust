@@ -4,6 +4,8 @@ Lightweight Rust implementation for [ComicGlass](http://comicglass.net/). All ri
 
 # Usage
 
+Root directory of the server is the current working directory.
+
 ```
 USAGE:
     mediaserver [OPTIONS]
