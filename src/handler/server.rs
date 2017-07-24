@@ -37,7 +37,13 @@ pub fn server_handler(req: &mut Request) -> IronResult<Response> {
             });
         }
 
-        let mut html = String::from(r#"<html><head><meta charset="UTF-8"></head><body><ul>"#);
+        let mut html = format!(
+            r#"<html><head>
+            <meta charset="UTF-8"><title>{}</title>
+            </head><body><h1>{}</h1><ul>"#,
+            try!(get_path(req)),
+            try!(get_path(req))
+        );
         for path in valid_paths {
             html += &path_to_html(&path).unwrap_or_default();
         }
