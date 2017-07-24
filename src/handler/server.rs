@@ -17,12 +17,24 @@ pub fn server_handler(req: &mut Request) -> IronResult<Response> {
     if query_path.is_dir() {
         let mut valid_paths = vec![];
         {
+            use std::cmp;
             let paths = try!(fs::read_dir(query_path).map_err(HandlerError::from));
             for path in paths {
                 if let Ok(p) = path {
                     valid_paths.push(p.path().as_path().to_owned());
                 }
             }
+            valid_paths.sort_by(|a, b| -> cmp::Ordering {
+                if a.is_dir() ^ b.is_dir() {
+                    if a.is_dir() {
+                        cmp::Ordering::Less
+                    } else {
+                        cmp::Ordering::Greater
+                    }
+                } else {
+                    a.cmp(b)
+                }
+            });
         }
 
         let mut html = String::from(r#"<html><head><meta charset="UTF-8"></head><body><ul>"#);
