@@ -5,13 +5,16 @@ use std::fmt;
 pub enum HandlerError {
     StringError(String),
     MissingQueryParam(String),
+    IOError(String),
     AuthError(Option<String>, Option<String>),
 }
 
 impl fmt::Display for HandlerError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            HandlerError::StringError(ref i) => fmt::Display::fmt(i, f),
+            HandlerError::StringError(ref i) | HandlerError::IOError(ref i) => {
+                fmt::Display::fmt(i, f)
+            }
             HandlerError::MissingQueryParam(ref i) => {
                 fmt::Display::fmt(&format!("Missing query parameter: {}", i), f)
             }
@@ -32,7 +35,7 @@ impl fmt::Display for HandlerError {
 impl Error for HandlerError {
     fn description(&self) -> &str {
         match *self {
-            HandlerError::StringError(ref i) => i,
+            HandlerError::StringError(ref i) | HandlerError::IOError(ref i) => i,
             HandlerError::MissingQueryParam(_) => "Missing query parameter",
             HandlerError::AuthError(_, _) => "Authentication error",
         }
@@ -41,12 +44,17 @@ impl Error for HandlerError {
 
 impl From<HandlerError> for ::iron::IronError {
     fn from(e: HandlerError) -> ::iron::IronError {
-        ::iron::IronError::new(e, ::iron::status::BadRequest)
+        match e {
+            HandlerError::IOError(_) => {
+                ::iron::IronError::new(e, ::iron::status::InternalServerError)
+            }
+            _ => ::iron::IronError::new(e, ::iron::status::BadRequest),
+        }
     }
 }
 
 impl From<::std::io::Error> for HandlerError {
     fn from(e: ::std::io::Error) -> HandlerError {
-        HandlerError::StringError(e.to_string())
+        HandlerError::IOError(e.to_string())
     }
 }
