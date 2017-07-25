@@ -60,6 +60,13 @@ fn get_args() -> &'static ArgMatches<'static> {
                     .help("Password of the server, default: comicglass")
                     .takes_value(true),
             )
+            .arg(
+                Arg::with_name("all")
+                .long("all")
+                .short("a")
+                .help("Show all files and directories")
+                .takes_value(false),
+            )
             .get_matches();
     }
     &MATCHES

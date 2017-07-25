@@ -6,6 +6,39 @@ use error::HandlerError;
 
 pub mod server;
 
+fn is_visible(path: &Path) -> bool {
+    if ::get_args().is_present("all") {
+        return true;
+    }
+    use std::collections::HashSet;
+    lazy_static! {
+        static ref EXTS: HashSet<&'static str> = vec![
+            "gif",  "png",  "jpg",  "jpeg",
+            "tif",  "tiff", "zip",  "rar",
+            "cbz",  "cbr",  "bmp",  "pdf",
+            "cgt",
+        ].into_iter().collect();
+    }
+    let file_name = match path.file_name().and_then(|i| i.to_str()) {
+        Some(i) => i,
+        None => return false,
+    };
+    if file_name.chars().nth(0) == Some('.') {
+        false
+    } else if path.is_file() {
+        if let Some(ext) = path.extension() {
+            match ext.to_str() {
+                Some(e) => EXTS.contains(e),
+                None => false,
+            }
+        } else {
+            false
+        }
+    } else {
+        true
+    }
+}
+
 fn get_path(req: &::iron::Request) -> Result<String, HandlerError> {
     let mut path = String::new();
     for seg in req.url.path() {

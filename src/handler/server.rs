@@ -41,7 +41,9 @@ pub fn server_handler(req: &mut Request) -> IronResult<Response> {
             &raw_query_path[1..]
         );
         for path in valid_paths {
-            html += &path_to_html(&path).unwrap_or_default();
+            if is_visible(&path) {
+                html += &path_to_html(&path).unwrap_or_default();
+            }
         }
         html += r#"</ul></body></html>"#;
 
