@@ -8,9 +8,10 @@ Root directory of the server is the current working directory.
 
 ```
 USAGE:
-    mediaserver [OPTIONS]
+    mediaserver [FLAGS] [OPTIONS]
 
 FLAGS:
+    -a, --all        Show all files and directories
     -h, --help       Prints help information
     -V, --version    Prints version information
 
